@@ -25,10 +25,10 @@ class Start extends React.Component {
               "Content-Type": "application/json",
             },
           }).then((response) => {
-              this.setState({id: id}, ()=> console.log("Exam created with id: ", this.state.id))
+              this.setState({id: id})
               this.props.id(id)
               this.props.history.push('/exam')
-              
+
           })
           
       }

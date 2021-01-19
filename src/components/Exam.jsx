@@ -9,17 +9,36 @@ class Exam extends React.Component {
     questions: [],
   };
   componentDidMount = async () => {
-    console.log(this.props.id._id);
     const examDB = await fetch(
       "http://localhost:3001/exam/" + this.props.id._id
     );
     const exam = await examDB.json();
-    this.setState({ exam: exam[0] }, () => console.log(this.state.exam));
-    this.setState({ questions: this.state.exam.questions });
-    console.log(this.state.questions[0].text);
+    this.setState({ exam: exam[0] });
+    this.setState({ questions: this.state.exam.questions })
   };
-  nextQuestion = () => {
-      this.setState({questNum: this.state.questNum+1}, ()=>console.log(this.state.questNum))
+  nextQuestion = async() => {
+    console.log(this.state.exam)
+      if (this.state.questNum < 4) {
+      this.setState({questNum: this.state.questNum+1})}
+      else if(this.state.questNum === 4) {
+        console.log("Done!")
+
+    }
+    try{
+      const response = await fetch("http://localhost:3001/exam/" + this.props.id._id + "/answer", {
+      method: 'POST',
+      body: {
+        question: this.state.questNum,
+        answer: this.state.answer
+      }
+    })
+    let exam = await response.json()
+    await this.state.exam.score < 5 ? 
+      this.setState({exam: exam.exam[0]}, ()=>console.log("score: ", this.state.exam.score)) : 
+      console.log("You already reached the max points for this exam. ")
+  }catch(error) {
+      console.log(error)
+    }
   }
 
   handleAnswer = (e) => {
@@ -30,7 +49,7 @@ class Exam extends React.Component {
   render() {
     return (
       <div className="wrap">
-        <div className="exam-body-start">
+        {this.state.questNum < 4 ? (<div className="exam-body-start">
           <div className="question-text">
             {this.state.questions[this.state.questNum] &&
               this.state.questions[this.state.questNum].text}
@@ -46,10 +65,10 @@ class Exam extends React.Component {
                 )
               )}
           </div>
-        </div>
-        <div className='next-btn rounded-pill' onClick={this.nextQuestion}>
+        </div>) : <div className='exam-body-start'>The exam is done! Here is your score: {this.state.exam.score}</div> }
+        {this.state.questNum < 4 && <div className='next-btn rounded-pill' onClick={this.nextQuestion}>
             SUBMIT
-        </div>
+        </div>}
       </div>
     );
   }
