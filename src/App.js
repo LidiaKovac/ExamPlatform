@@ -1,23 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import { BrowserRouter, Route } from "react-router-dom";
+import "./App.scss";
+import Exam from "./components/Exam";
+import Start from "./components/Start";
 
 function App() {
+  const [id, setId] = useState();
+  const getInfo = (_id) => {
+    setId({ _id });
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Route exact path="/">
+          <Start id={getInfo} />
+        </Route>
+        <Route exact path="/exam">
+          <Exam id={id}/>
+        </Route>
+      </BrowserRouter>
     </div>
   );
 }
