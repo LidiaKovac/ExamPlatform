@@ -17,24 +17,26 @@ class Exam extends React.Component {
     this.setState({ questions: this.state.exam.questions })
   };
   nextQuestion = async() => {
-    console.log(this.state.exam)
       if (this.state.questNum < 4) {
       this.setState({questNum: this.state.questNum+1})}
       else if(this.state.questNum === 4) {
         console.log("Done!")
 
     }
-    try{
+    try {
       const response = await fetch("http://localhost:3001/exam/" + this.props.id._id + "/answer", {
       method: 'POST',
-      body: {
-        question: this.state.questNum,
-        answer: this.state.answer
+      body: JSON.stringify({
+        "question": this.state.questNum,
+        "answer": parseInt(this.state.answer)
+      }),
+      headers: {
+        "Content-Type": "application/json", //IMPORTANT
       }
     })
     let exam = await response.json()
     await this.state.exam.score < 5 ? 
-      this.setState({exam: exam.exam[0]}, ()=>console.log("score: ", this.state.exam.score)) : 
+      this.setState({exam: exam[0]}, ()=> {console.log(this.state.exam.score)}) : 
       console.log("You already reached the max points for this exam. ")
   }catch(error) {
       console.log(error)
